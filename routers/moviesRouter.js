@@ -2,7 +2,7 @@
 const express = require('express')
 // estrapoliamo e usiamo la parte di router
 const movieRouter = express.Router();
-// importo il controller della risorsa post
+// importo il controller della risorsa movie
 const controller = require('../controllers/movieController');
 
 

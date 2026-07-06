@@ -14,45 +14,51 @@ const indexMovies = (req, res) => {
             console.error('Error executing query:', err);
             return res.status(500).json({ error: true, message: 'Internal Server Error' });
         }
+            const movies = results.map((movie) => {
+            return {
+                ...movie,
+                image: req.imagePath + movie.image
+            }
+        })
+        
         console.log(results);
         
-        res.json(results);
+        res.json(movies);
+        
     });
 }
 
 
-const showMovies = (req, res) => {
-    console.log(req.params);
-    const postId = Number(req.params.id);
-    console.log(postId);
+function showMovies (req, res) {
+    // recuperiamo l'id dall' URL
+    const id = req.params.id
 
-    // Prepariamo la query
+    /// query da eseguire con ?segnaposto per prepared statement per movie
     const sql = 'SELECT * FROM movies WHERE id = ?';
 
-    // eseguire la query
-    connection.query(sql, [postId], (err, results) => {
-        if (err) {
-            console.error('Error executing query:', err);
-            return res.status(500).json({ error: true, message: 'Internal Server Error' });
-        }
+    // query da eseguire con ?segnaposto per le reviews del movie
+    const reviewsSql = `select * from reviews where movie_id = ?`;
 
-        //console.log(results);
-        
-        if (results.length === 0) {
-            return res.status(404).json({ error: true, message: '404 Post non trovato'});
-        }
-        const post = results[0];
-        connection.query(sql, [postId], (err, results) => {
-            if (err) {
-                console.error('Error executing query:', err);
-                return res.status(500).json({ error: true, message: 'Internal Server Error'});
-            }
-            // aggiungi gli posts all'oggetto tag
-            console.log(results);
-        res.json(post);
-        });
+    connection.query(sql, [id], (err, results) => {
+        if (err) return res.status(500).json({ error: 'Database query failed' });
+        if (results.length === 0) return res.status(404).json({ error: 'Movie not found' });
+
+        // Recuperiamo il post
+        const movie = results[0];
+
+        movie.image = req.imagePath + movie.image;
+
+        // Se è andata bene, eseguiamo la seconda query per i reviews
+        connection.query(reviewsSql, [id], (err, results) => {
+            if (err) return res.status(500).json({ error: 'Database query failed'});
+
+            // Aggiungiamo i reviews del movi
+            movie.tags = results;
+            // Returniamo il movie con la nuova prop reviews
+            res.json(movie);
+        })
 });
-}
+};
 
 
 
