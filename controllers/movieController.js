@@ -5,6 +5,7 @@ const { error } = require('node:console');
 
 // elenco funzioni relative alle rotte della risorsa movie
 const indexMovies = (req, res) => {
+    
 
     const sql = 'SELECT * FROM movies';
     connection.query(sql, (err, results) => {
@@ -26,6 +27,7 @@ const indexMovies = (req, res) => {
         res.json(movies);
         
     });
+    
 }
 
 
