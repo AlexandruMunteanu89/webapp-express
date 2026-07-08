@@ -5,7 +5,6 @@ const { error } = require('node:console');
 
 // elenco funzioni relative alle rotte della risorsa movie
 const indexMovies = (req, res) => {
-    
 
     const sql = 'SELECT * FROM movies';
     connection.query(sql, (err, results) => {
@@ -27,7 +26,6 @@ const indexMovies = (req, res) => {
         res.json(movies);
         
     });
-    
 }
 
 
@@ -35,7 +33,7 @@ function showMovies (req, res) {
     // recuperiamo l'id dall' URL
     const id = req.params.id
 
-    /// query da eseguire con ?segnaposto per prepared statement per movie
+    // query da eseguire con ?segnaposto per prepared statement per movie
     const sql = 'SELECT * FROM movies WHERE id = ?';
 
     // query da eseguire con ?segnaposto per le reviews del movie
@@ -62,6 +60,26 @@ function showMovies (req, res) {
 });
 };
 
+// inserimento di review specifica legata ad un movie
+function storeReview(req, res) {
+    // recuperiamo l'id dall' URL
+    const id = req.params.id;
+
+    // recuperiamo info nel body
+    const { text, name, vote } = req.body;
+
+    // prepariamo la query
+    const sql = 'INSERT INTO reviews (text, name, vote, movie_id) VALUES (?,?,?,?)';
+
+    // chiamata per esecuzione query aggiunta review
+    connection.query(sql, [text, name, vote, id], (err, reviewResult) => {
+        if (err) return res.status(500).json({ error: 'La query del database non è riuscita'});
+        // restituiamo codice rest corretto
+        res.status(201);
+        res.json({ message: 'Review aggiunta con successo', id: reviewResult.insertId })
+    })
+}
 
 
-module.exports = {indexMovies, showMovies};
+
+module.exports = {indexMovies, showMovies, storeReview};

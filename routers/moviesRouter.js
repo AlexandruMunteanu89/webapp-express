@@ -6,10 +6,13 @@ const movieRouter = express.Router();
 const controller = require('../controllers/movieController');
 
 
-// troviamo la rotta e ritorniamo tutti i film
+// definisco le varie rotte relative alla risorsa specifica
+// index-troviamo la rotta e ritorniamo tutti i film
 movieRouter.get('/', controller.indexMovies);
-// troviamo la rotta e ritorniamo un film specifico
+// show-troviamo la rotta e ritorniamo un film specifico
 movieRouter.get('/:id', controller.showMovies);
+// store reviews
+movieRouter.post('/:id/reviews', controller.storeReview);
 
 
 
