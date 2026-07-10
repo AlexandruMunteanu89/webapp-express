@@ -4,6 +4,7 @@ const express = require('express')
 const movieRouter = express.Router();
 // importo il controller della risorsa movie
 const controller = require('../controllers/movieController');
+const upload = require('../middlewares/multer');
 
 
 // definisco le varie rotte relative alla risorsa specifica
@@ -13,6 +14,8 @@ movieRouter.get('/', controller.indexMovies);
 movieRouter.get('/:id', controller.showMovies);
 // store reviews
 movieRouter.post('/:id/reviews', controller.storeReview);
+// store movies
+movieRouter.post('/', upload.single('image'), controller.storeMovie);
 
 
 

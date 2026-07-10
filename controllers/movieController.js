@@ -20,7 +20,6 @@ const indexMovies = (req, res) => {
                 image: req.imagePath + movie.image
             }
         })
-        
         console.log(results);
         
         res.json(movies);
@@ -28,7 +27,7 @@ const indexMovies = (req, res) => {
     });
 }
 
-
+// dettaglio del film con reviews associate
 function showMovies (req, res) {
     // recuperiamo l'id dall' URL
     const id = req.params.id
@@ -52,12 +51,32 @@ function showMovies (req, res) {
         connection.query(reviewsSql, [id], (err, results) => {
             if (err) return res.status(500).json({ error: 'Database query failed'});
 
-            // Aggiungiamo i reviews del movi
+            // Aggiungiamo i reviews del film
             movie.tags = results;
             // Returniamo il movie con la nuova prop reviews
             res.json(movie);
         })
 });
+};
+
+// funzione di stode del film
+function storeMovie (req, res) {
+    const { title, director, genre, release_year, abstract } = req.body;
+
+    const imageName = `${req.file.filename}`;
+    // prepariamo la query
+    const sql = "INSERT INTO movies (title, director, genre, release_year, abstract, image) VALUES (?, ?, ?, ?, ?, ?)";
+    // eseguiamo la query
+    connection.query(
+        sql,
+        [title, director, genre, release_year, abstract, imageName],
+        (err, results) => {
+            if (err) {
+                console.log(err)
+                return (new Error("Errore interno del server"));
+            }
+            res.status(201).json({ id: results.insertId }); // restituiamo l'id assegnato dal DB
+        });
 };
 
 // inserimento di review specifica legata ad un movie
@@ -82,4 +101,7 @@ function storeReview(req, res) {
 
 
 
-module.exports = {indexMovies, showMovies, storeReview};
+
+
+
+module.exports = {indexMovies, showMovies, storeReview, storeMovie};
