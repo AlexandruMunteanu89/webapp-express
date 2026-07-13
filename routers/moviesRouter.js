@@ -16,6 +16,8 @@ movieRouter.get('/:id', controller.showMovies);
 movieRouter.post('/:id/reviews', controller.storeReview);
 // store movies
 movieRouter.post('/', upload.single('image'), controller.storeMovie);
+// destroy
+movieRouter.delete('/:id', controller.destroy);
 
 
 

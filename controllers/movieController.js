@@ -97,6 +97,17 @@ function storeReview(req, res) {
         res.status(201);
         res.json({ message: 'Review aggiunta con successo', id: reviewResult.insertId })
     })
+};
+
+// funzione Delete per cancellare un film
+function destroy (req, res) {
+    // recuperiamo l'id dall'URL
+    const { id } = req.params;
+    // eliminiamo il film
+    connection.query('DELETE FROM movies WHERE id = ?', [id], (err) => {
+        if (err) return res.status(500).json({ error: 'Failed to delete movie' });
+        res.sendStatus(204)
+    });
 }
 
 
@@ -104,4 +115,4 @@ function storeReview(req, res) {
 
 
 
-module.exports = {indexMovies, showMovies, storeReview, storeMovie};
+module.exports = {indexMovies, showMovies, storeReview, storeMovie, destroy};
